@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/TeacherNav :: TeacherNav"></div>
+<div class="table-responsive" style="margin-left: 18%">
+    <table class="table table-striped"  >
+        <thead>
+        <tr>
+            <th colspan="5" style="text-align:left ;font-size: 20px"><span th:text="${cs.classname}"></span>&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+        <tr>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>试卷名称</th>
+            <th>试卷总分</th>
+            <th>个人成绩</th>
+            <th>考试时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="score: ${score.getContent()}">
+            <td th:text="${score.users.username}"></td>
+            <td th:text="${score.users.truename}"></td>
+            <td th:text="${score.pname}"></td>
+            <td th:text="${score.zscore}"></td>
+            <td th:text="${score.score}"></td>
+            <td th:text="${score.tjtime}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<div class="row" style="margin-left: 18%">
+    <!--分页文字信息  -->
+    <div class="col-md-6">当前 <span th:text="${score.getNumber()} + 1"></span>页,总<span th:text="${score.totalPages}"></span>
+        页,总 <span th:text="${score.totalElements}"></span> 条记录</div>
+    <!-- 分页条信息 -->
+    <div class="col-md-6">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li><a th:href="@{/findAllScore}">首页</a></li>
+                <li><a th:href="@{/findAllScore(pageNum = ${score.hasPrevious()} ? ${score.getNumber() } : 1)}">上一页</a></li>
+                <li><a th:href="@{/findAllScore(pageNum = ${score.hasNext()} ? ${score.getNumber()} + 2 : ${score.totalPages})}">下一页</a></li>
+                <li><a th:href="@{/findAllScore(pageNum = ${score.totalPages})}">末页</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/TeacherNav :: TeacherNav"></div>
+<div class="table-responsive" style="margin-left: 18%">
+    <table class="table table-striped"  >
+        <thead>
+        <tr>
+            <th colspan="5" style="text-align:left ;font-size: 20px"><button class="line btn btn-primary btn-sm"><span th:text="${cs.classname}"></span></button>&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>id</th>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>试卷名称</th>
+            <th>试卷总分</th>
+            <th>个人成绩</th>
+            <th>考试时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="score: ${score}">
+            <td th:text="${score.seid}"></td>
+            <td th:text="${score.userid}"></td>
+            <td th:text="${score.username}"></td>
+            <td th:text="${score.truename}"></td>
+            <td th:text="${score.pname}"></td>
+            <td th:text="${score.zscore}"></td>
+            <td th:text="${score.score}"></td>
+            <td th:text="${score.tjtime}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

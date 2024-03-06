@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/TeacherNav :: TeacherNav"></div>
+<div class="table-responsive" style="margin-left: 18%">
+    <table class="table table-striped"  >
+        <thead>
+        <tr>
+            <h3><strong th:text="${exam.pname}+'详情'"></strong></h3>
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>题类型</th>
+            <th>题干</th>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+            <th>D</th>
+            <th>正确答案</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tm: ${tm}">
+            <td th:text="${tm.pid}"></td>
+            <td th:text="${tm.stype}"></td>
+            <td th:text="${tm.scontent}"></td>
+            <td th:text="${tm.sa}"></td>
+            <td th:text="${tm.sb}"></td>
+            <td th:text="${tm.sc}"></td>
+            <td th:text="${tm.sd}"></td>
+            <td th:text="${tm.skey}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-success" type="button" onclick="window.location='./selectexam'">返回</button>
+</div>
+
+</body>
+</html>

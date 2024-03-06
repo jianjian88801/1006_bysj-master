@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="PaperNav">
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">在线考试系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a>考试中心</a></li>
+                    <li><a>考试历史</a></li>
+                    <li><a>修改密码</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a><span class="glyphicon glyphicon-user" th:text="${session.lis.getTruename()} "></span>（学生）</a></li>
+                    <li><a onclick="loginOut()"><span class="glyphicon glyphicon-off"></span>退出系统</a></li>
+                    <script>
+                        function loginOut() {
+                            if(confirm('将退出该系统!')){
+                                // sessionStorage.clear();
+                                location.replace("./logout"); //loginOut即是你所要转的退出登录的地址
+                            }else {
+
+                            }
+                        }
+                    </script>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="bootstrap" >
+    <link rel="icon" href="../img/favicon.ico">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</div>
+<div th:fragment="StudentNav">
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" th:href="@{/StuMan}">在线考试系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a th:href="@{/examList}">考试中心</a></li>
+                    <li><a th:href="@{/findAllStuPaper}">考试历史</a></li>
+                    <li><a data-toggle="modal" data-target="#myModal">修改密码</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a><span class="glyphicon glyphicon-user" th:text="${session.lis.getTruename()} "></span>（学生）</a></li>
+                    <li><a onclick="loginOut()"><span class="glyphicon glyphicon-off"></span>退出系统</a></li>
+                    <script>
+                        function loginOut() {
+                            if(confirm('将退出该系统!')){
+                                // sessionStorage.clear();
+                                location.replace("./logout"); //loginOut即是你所要转的退出登录的地址
+                            }else {
+
+                            }
+                        }
+                    </script>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <form id="loginForm" th:action="@{/xiugai}" method="post" >
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="userid" th:value="${session.lis.getUserid()}">
+                        <input type="hidden" id="ps" th:value="${session.lis.getUserpwd()}">
+                        <div class="form-group form-inline">
+                            <label>原密码：</label>
+                            <input type="password" name="pass" id="pass" class="form-control" placeholder="请输入旧密码"/>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label>新密码：</label>
+                            <input type="password" name="userpwd" id="password" class="form-control" placeholder="请输入新密码"/>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label>重复密码：</label>
+                            <input type="password" name="password2" id="password2" class="form-control" placeholder="请重复新密码"/>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" id="submit">提交更改</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </form>
+    <script>
+        $("#loginForm").submit(function(){
+            var old =document.getElementById("ps").value;
+            var pass = document.getElementById("pass").value;
+            var password = document.getElementById("password").value;
+            var password2 = document.getElementById("password2").value;
+            if(pass == ""){
+                //此处这里进行逻辑处理
+                alert("请输入原密码");return false;
+            }else{
+                if(old !=pass) {
+                    alert("初始密码不正确");return false;}
+                else {
+                    if(password == "") {
+                        alert("请输入新密码");return false;}
+                    else {
+                        if(password2 == "") {
+                            alert("请重复输入新密码");return false;}
+                        else {
+                            if(password2 != password){
+                                alert("两次密码输入不一致");return false;}
+                            else {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+    <script type="text/javascript">
+        $('#myModal').on('shown.bs.modal', function () {
+            // alert("完全显示模态框");
+        });
+        $('#myModal').on('hidden.bs.modal', function () {
+            // alert("完全隐藏模态框");
+        });
+    </script>
+</div>
+
+</body>
+</html>

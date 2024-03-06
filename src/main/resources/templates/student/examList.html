@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/bootstrap :: StudentNav"></div>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row">
+                <!--<h4 style="text-align: center">试卷列表</h4>-->
+              <div th:if="${examslenth} ne null">
+                  <div th:each="exams:${exams}">
+                      <div class="col-md-4">
+                          <div class="thumbnail">
+                              <img alt="300x200" src="../img/peitu1.jpg" />
+                              <div class="caption">
+                                  <h3 th:text="${exams.pname}"></h3>
+                                  <p>考试科目: <span th:text="${exams.course.cname}"></span> &emsp;&emsp; </p>
+                                  <p>考试时段: <span th:text="${exams.examdate}+'~'+${exams.examtime}"></span></p>
+                                  <p>题目数量: <span th:text="${exams.singlenumber}"></span> &emsp;&emsp; 总分: <span th:text="${exams.singlenumber}*${exams.singlecore}"></span> &emsp;&emsp;</p>
+                                  <p class="beginTime">考试时长: <span th:text="${exams.testtime}"></span> 分钟</p>
+                                  <p>
+                                      <a class="btn btn-default btn-lg btn-block beginExam" th:onclick="'javascript:StratTest(\''+${exams.eid}+'\');'">进入考试</a>
+                                  </p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+                <div th:if="${examslenth} eq null">
+                <div class="jumbotron">
+                    <h1>暂无待考信息</h1>
+                    <p>请等待教师分配</p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function StratTest(eid) {
+       if (!eid) {
+            alert("error");
+        } else {
+           var datalist="";
+           $.ajax({
+               url: '/findOneStuExam',
+               type: 'POST',
+               dataType: 'json',
+               async:false,
+               contentType: 'application/json;charset=UTF-8',
+               data: JSON.stringify({
+                   eid: eid
+               }),
+               success: function (data) {
+                   datalist=data;
+               },
+           });
+           if(datalist==""){
+               // 先去查询数据
+               var examdate="";
+               var examtime="";
+               $.ajax({
+                   url: '/findExamByEid',
+                   type: 'POST',
+                   dataType: 'json',
+                   async:false,
+                   contentType: 'application/json;charset=UTF-8',
+                   data: JSON.stringify({
+                       eid: eid
+                   }),
+                   success: function (data) {
+                       examdate =data.examdate;
+                       examtime = data.examtime;
+                   },
+                   error: function () {
+                       alert("错误");
+                   }
+               });
+               //获取当前日期
+               var date = new Date();
+               var seperator1 = "-";
+               var year = date.getFullYear();
+               var month = date.getMonth() + 1;
+               var strDate = date.getDate();
+               if (month >= 1 && month <= 9) {
+                   month = "0" + month;
+               }
+               if (strDate >= 0 && strDate <= 9) {
+                   strDate = "0" + strDate;
+               }
+               var currentdate = year + seperator1 + month + seperator1 + strDate;
+
+               console.log(currentdate);
+
+               if (currentdate >= examdate) {
+                   if (currentdate <= examtime) {
+                       if(confirm('将开始考试，是否继续?')){
+                           window.location.href="paper?eid="+eid;
+                       }
+                   } else {
+                       alert("考试日期已经截止！")
+                   }
+               } else {
+                   alert("考试日期未开始！")
+               }
+           }else {
+               alert("你已经参加过本次考试！")
+           }
+
+           }
+    }
+
+
+
+</script>
+</body>
+</html>

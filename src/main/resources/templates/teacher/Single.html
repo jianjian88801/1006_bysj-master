@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/TeacherNav :: TeacherNav"></div>
+<script type="text/javascript">
+    $(function(){
+        //实现全选与反选 var ids=[];
+        $("#allAndNotAll").click(function() {
+            if (this.checked){
+                $("input[name='items']:checkbox").each(function(){
+                    $(this).attr("checked", true);
+                });
+            } else {
+                $("input[name='items']:checkbox").each(function() {
+                    $(this).attr("checked", false);
+                });
+            }
+        });
+        //获取被选中的id
+
+        $('#getAllSelectedId').click(function(){
+            var ids=new Array();
+            $("input[name='items']:checked").each(function(){
+                ids.push($(this).attr("id"));
+            });
+            // var chk_value=ids.join(",");
+            if(ids==""){
+                alert("请选择删除的数据！")
+            }else {
+                location.href = "/deleteManySingle?ids=" + ids;
+            }
+        });
+    });
+</script>
+<div class="table-responsive" style="margin-left: 18%">
+    <table class="table table-striped"  >
+        <thead>
+        <tr>
+            <th colspan="5" style="text-align:left ;font-size: 20px"><button class="line btn btn-primary btn-sm" onclick="add()" >添加新题</button>&nbsp;&nbsp;&nbsp;
+                <button class="line btn btn-primary btn-sm" id="getAllSelectedId">批量删除</button></th>
+        </tr>
+        <tr>
+            <td ><input type="checkbox" id="allAndNotAll" />全选/反选</td>
+            <th>编号</th>
+            <th>所属科目</th>
+            <th>题干</th>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+            <th>D</th>
+            <th>答案</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sublist: ${pageInfo.getContent()}">
+            <td><input type="checkbox" name="items" th:id="${sublist.sid}"/></td>
+            <td th:text="${sublist.sid}"></td>
+            <td th:text="${sublist.course.cname}"></td>
+            <td th:text="${sublist.scontent}"></td>
+            <td th:text="${sublist.sa}"></td>
+            <td th:text="${sublist.sb}"></td>
+            <td th:text="${sublist.sc}"></td>
+            <td th:text="${sublist.sd}"></td>
+            <td th:text="${sublist.skey}"></td>
+            <td>
+                <a th:onclick="'javascript:edit(\''+${sublist.sid}+'\');'" style="text-decoration: none;">
+                    <button class="btn btn-default" style="width: 50px;height: 30px;background: #3e8f3e">修改</button>
+                </a>
+                <a th:onclick="'javascript:trash(\''+${sublist.sid}+'\');'" style="text-decoration: none;"
+                   data-toggle="modal" data-target="#trashModal">
+                    <button class="btn btn-default" style="width: 50px;height: 30px;background: red">
+                        删除
+                    </button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+    <div class="row" style="margin-left: 18%">
+        <!--分页文字信息  -->
+        <div class="col-md-6">当前 <span th:text="${pageInfo.getNumber()} + 1"></span>页,总<span th:text="${pageInfo.totalPages}"></span>
+            页,总 <span th:text="${pageInfo.totalElements}"></span> 道题目</div>
+        <!-- 分页条信息 -->
+        <div class="col-md-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li><a th:href="@{/finddanxuan}">首页</a></li>
+                    <li><a th:href="@{/finddanxuan(pageNum = ${pageInfo.hasPrevious()} ? ${pageInfo.getNumber() } : 1)}">上一页</a></li>
+                    <li><a th:href="@{/finddanxuan(pageNum = ${pageInfo.hasNext()} ? ${pageInfo.getNumber()} + 2 : ${pageInfo.totalPages})}">下一页</a></li>
+                    <li><a th:href="@{/finddanxuan(pageNum = ${pageInfo.totalPages})}">末页</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="my" style="text-align:center">添加题目</h4>
+            </div>
+            <form class="form-horizontal" th:action="@{/addSingle}" method="post">
+                <div class="modal-body">
+                    <input name="stype" value="1" hidden="hidden"/>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">题目：</span>
+                        <textarea class="form-control" rows="3" name="scontent" id="scontent"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">A:</span>
+                        <textarea class="form-control" rows="3" name="sa" id="sa"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">B:</span>
+                        <textarea class="form-control" rows="3" name="sb" id="sb"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">C:</span>
+                        <textarea class="form-control" rows="3" name="sc" id="sc"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">D:</span>
+                        <textarea class="form-control" rows="3" name="sd" id="sd"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">答案：</span>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="skey" name="skey">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属课程</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="cno" name="cno">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" id="addbut">提交</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- Modal编辑模态框 -->
+<div class="modal fade" id="editch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myedit">编辑</h4>
+            </div>
+            <form class="form-horizontal" th:action="@{/updateSingle}" method="post">
+                <div class="modal-body">
+                    <input name="sid" id="sid1" hidden="hidden"/>
+                    <input name="stype" id="stype1" hidden="hidden"/>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">题目：</span>
+                        <textarea class="form-control" rows="3" name="scontent" id="scontent1"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">A:</span>
+                        <textarea class="form-control" rows="3" name="sa" id="sa1"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">B:</span>
+                        <textarea class="form-control" rows="3" name="sb" id="sb1"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">C:</span>
+                        <textarea class="form-control" rows="3" name="sc" id="sc1"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">D:</span>
+                        <textarea class="form-control" rows="3" name="sd" id="sd1"></textarea>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" style="height: 40px ; tab-size: 16px ">答案：</span>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="skey1" name="skey">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属课程</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="cno1" name="cno">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" id="upaddbut">提交</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--删除的模态框-->
+<div class="modal fade" id="trashModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模糊框头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">删除！</h4>
+            </div>
+            <!-- 模糊框主体 -->
+            <div class="modal-body">
+                <strong>你确定要删除吗？</strong>
+            </div>
+            <!-- 模糊框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="delSure btn btn-info" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.container-fluid -->
+</div>
+
+<!-- /#page-wrapper -->
+</div>
+
+</div>
+<script>
+    //添加
+    function add() {
+         getpoint();
+        $("#addch").modal({
+            backdrop: "static"
+        });
+    };
+    function getpoint() {
+        $("#cno").empty();
+        $.ajax({
+            url: '/findAllCourse',
+            type: 'get',
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    $("#cno").append("<option value='" + data[i].cno+ "'>" + data[i].cname + "</option>");
+                }
+            }
+        });
+    }
+    // 编辑信息的方法
+    function edit(sid) {
+        $.ajax({
+            url: '/findAllCourse',
+            type: 'get',
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    $("#cno1").append("<option value='" + data[i].cno + "'>" + data[i].cname + "</option>");
+                }
+            }
+        });
+        if (!sid) {
+            alert("error");
+        } else {
+            // 先去查询数据
+            $.ajax({
+                url: '/findBySid',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({
+                    sid: sid
+                }),
+                success: function (data) {
+                    $("#sid1").val(data.sid);
+                    $("#stype1").val(data.stype)
+                    $("#scontent1").val(data.scontent);
+                    $("#sa1").val(data.sa);
+                    $("#sb1").val(data.sb);
+                    $("#sc1").val(data.sc);
+                    $("#sd1").val(data.sd);
+                    $("#skey1").val(data.skey);
+                    $("#cno1").val(data.cno);
+                    $("#editch").modal('show');
+                },
+                error: function () {
+                    alert("错误");
+                }
+            });
+        }
+    }
+    //删除
+    function trash(sid) {
+        if (!sid) {
+            alert("error");
+        } else {
+            $(".delSure").click(function () {
+                $.ajax({
+                    url: '/deleteSingle?sid=' + sid,
+                    type: 'POST',
+                    success: function (data) {
+                        $("body").html(data);
+                    }
+                });
+            });
+        }
+    }
+</script>
+</body>
+</html>

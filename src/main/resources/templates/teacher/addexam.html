@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/TeacherNav :: TeacherNav"></div>
+<div class="table-responsive">
+    <div align="center">
+        <div class="container">
+            <div class="row clearfix">
+                <!--<div class="col-md-12 column">-->
+
+                    <form class="form-horizontal" role="form" id="examPaperAction" th:action="@{/insertexam}" method="post">
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">试卷名称</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="pname" name="pname" type="text"  placeholder="试卷名称" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">命题人</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="userid" name="userid" th:value="${session.Tlis.getUserid()}"  readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">所属课程</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" name="cno" id="cno" data-live-search="true">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属班级</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" name="classid" id="classids"  >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">单选题数量</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="singlenumber" name="singlenumber" type="text"  placeholder="试卷中的试题总量" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">每小题分数</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="singlecore" name="singlecore" type="text"  placeholder="每个选择题的分值" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">多选题数量</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="multiplenumber" name="multiplenumber" type="text"  placeholder="多选题数量" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">每小题分数</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="multiplecore" name="multiplecore" type="text" placeholder="每个多选题的分值" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">考试日期</label>
+                            <div style="text-align: left" >
+                                <input type="date" value="2019-11-15" name="examdate"/>至
+                                <input type="date" value="2019-11-16" name="examtime"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="testtime" class="col-sm-2 control-label">考试时长</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="testtime" name="testtime" type="text"  placeholder="当前试卷考试时长 单位(min)" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button  type="submit" class="btn btn-default btn-lg btn-block">
+                                    生成试卷
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                <!--</div>-->
+            </div>
+        </div>
+</div>
+</div>
+<script>
+
+    //课程
+    $.ajax({
+        url: '/findAllCourse',
+        type: 'get',
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $("#cno").append("<option value='" + data[i].cno+ "'>" + data[i].cname + "</option>");
+            }
+        }
+    });
+    //班级
+    $.ajax({
+        url: '/findAllClass',
+        type: 'POST',
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $("#classids").append("<option value='" + data[i].classid + "'>" + data[i].classname + "</option>");
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

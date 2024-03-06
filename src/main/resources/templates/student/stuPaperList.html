@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/bootstrap :: StudentNav"></div>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row">
+                <!--<h4 style="text-align: center">答卷列表</h4>-->
+                    <div th:each="exams:${stuexamlist}">
+                        <div class="col-md-4">
+                            <div class="thumbnail">
+                                <img alt="300x200" src="../img/peitu2.jpg" />
+                                <div class="caption">
+                                    <h3 class="pname" th:text="${exams.pname}"></h3>
+                                    <p>总分: <span th:text="${exams.zscore}"></span></p>
+                                    <p>得分: <span th:text="${exams.score}"></span> &emsp;&emsp; </p>
+                                    <p class="beginTime">完成时间: <span th:text="${exams.tjtime}"></span></p>
+                                    <p>
+                                        <a class="btn btn-default btn-lg btn-block beginExam" th:onclick="'javascript:Stupaper(\''+${exams.seid}+'\')'">答卷详情</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    <!--<div class="jumbotron">-->
+        <!--<h4 style="text-align: center">答卷列表</h4>-->
+        <!--<table class="table">-->
+            <!--<tr>-->
+                <!--<th>答卷ID</th>-->
+                <!--<th>试卷名称</th>-->
+                <!--<th>试卷总分</th>-->
+                <!--<th>个成绩</th>-->
+                <!--<th>操作</th>-->
+            <!--</tr>-->
+            <!--<tr th:each="exams:${stuexamlist}">-->
+                <!--<td th:text="${exams.seid}"></td>-->
+                <!--<td class="pname" th:text="${exams.pname}"></td>-->
+                <!--<td th:text="${exams.zscore}"></td>-->
+                <!--<td th:text="${exams.score}"></td>-->
+               <!--<td> <a th:onclick="'javascript:Stupaper(\''+${exams.seid}+'\')'">答卷详情</a></td>-->
+            <!--</tr>-->
+        <!--</table>-->
+    <!--</div>-->
+</div>
+<script th:inline="javascript">
+
+    function Stupaper(seid) {
+                var pname="";
+                $.ajax({
+                    url: '/findBySeid',
+                    type: 'POST',
+                    dataType: 'json',
+                    async:false,
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        seid: seid
+                    }),
+                    success: function (data) {
+                        pname = data.pname;
+                    },
+                    error: function () {
+                        alert("错误");
+                    }
+                });
+                if(pname!=''){
+                    $.ajax({
+                                url: '/findByPname',
+                                type: 'POST',
+                                dataType: 'json',
+                                async:false,
+                                contentType: 'application/json;charset=UTF-8',
+                                data: JSON.stringify({
+                                    pname: pname
+                                }),
+                                success: function (data) {
+                                    console.log("cg");
+                                    examtime = data.examtime;
+                                },
+                                error: function () {
+                                    alert("错误");
+                                }
+                            });
+                            //获取当前日期
+                            var date = new Date();
+                            var seperator1 = "-";
+                            var year = date.getFullYear();
+                            var month = date.getMonth() + 1;
+                            var strDate = date.getDate();
+                            if (month >= 1 && month <= 9) {
+                                month = "0" + month;
+                            }
+                            if (strDate >= 0 && strDate <= 9) {
+                                strDate = "0" + strDate;
+                            }
+                            var currentdate = year + seperator1 + month + seperator1 + strDate;
+                            if(currentdate>examtime){
+                               window.location.href="stuPaper?seid="+seid;
+                            }else {
+                                alert("该考试在进行中，请考试结束后查看！");
+                            }
+                }
+    }
+</script>
+</body>
+</html>
